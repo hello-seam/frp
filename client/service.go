@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
+	"os"
 	"runtime"
 	"strconv"
 	"sync"
@@ -177,6 +178,10 @@ func (svr *Service) keepControllerWorking() {
 			xl.Info("try to reconnect to server...")
 			conn, session, err := svr.login()
 			if err != nil {
+				if svr.cfg.LoginFailExit {
+					xl.Error("reconnect to server error, exiting: %v", err)
+					os.Exit(1)
+				}
 				xl.Warn("reconnect to server error: %v", err)
 				time.Sleep(delayTime)
 
